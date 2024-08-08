@@ -16,7 +16,7 @@ services:
 
   db:
     image: mariadb:latest
-    container_name: mariadb
+    container_name: mariadb-ecommerce
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
@@ -28,7 +28,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: phpmyadmin
+    container_name: phpmyadmin-ecommerce
     restart: always
     ports:
       - 3004:80
