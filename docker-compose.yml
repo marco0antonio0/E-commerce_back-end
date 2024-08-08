@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: nest-docker-app
+    container_name: nest-docker-app-ecommerce-backend
     ports:
       - ${PORT}:3000
     depends_on:
