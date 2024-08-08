@@ -1,6 +1,14 @@
 
 # Teste Desenvolvedor(a) JR - Back End E-commerce
 
+### Projeto acess endpoints
+
+- [Acesso Endpoints](https://e-commerce-api.dirrocha.com/api-docs)
+- [Acesso phpMyAdmin](https://e-commerce-php.dirrocha.com/)
+- [Acesso Swaggger docs web](https://e-commerce-api.dirrocha.com/api-docs)
+
+### Acesso rapido a docs readme
+
 - [Estrutura do projeto](#estrutura-do-projeto)
 - [Documentação-dos-endpoints](#documentação-dos-endpoints)
 - [Como acessar a documentação swagger](#acessando-a-documentação-da-api)
