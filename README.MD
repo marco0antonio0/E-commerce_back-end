@@ -1,10 +1,10 @@
 
 # Teste Desenvolvedor(a) JR - Back End E-commerce
 
-### Projeto acess endpoints
+### Projeto acess endpoints - Prods
 
-- [Acesso Endpoints](https://e-commerce-api.dirrocha.com/api-docs)
-- [Acesso phpMyAdmin](https://e-commerce-php.dirrocha.com/)
+- [Acesso Endpoints web](https://e-commerce-api.dirrocha.com/api-docs)
+- [Acesso phpMyAdmin web](https://e-commerce-php.dirrocha.com/)
 - [Acesso Swaggger docs web](https://e-commerce-api.dirrocha.com/api-docs)
 
 ### Acesso rapido a docs readme
@@ -51,8 +51,8 @@ Este projeto é uma aplicação de e-commerce desenvolvida para o teste de Desen
 1. **Clone o repositório:**
 
    ```sh
-   git clone <https://github.com/seu-usuario/seu-repositorio.git>
-   cd seu-repositorio
+   git clone <https://github.com/marco0antonio0/E-commerce_back-end>
+   cd E-commerce_back-end
    ```
 
 2. **Instale as dependências:**
@@ -76,19 +76,13 @@ Este projeto é uma aplicação de e-commerce desenvolvida para o teste de Desen
     PROD='false'
     ```
 
-4. **Execute as migrações do banco de dados:**
-
-   ```sh
-   npx sequelize-cli db:migrate
-   ```
-
-5. **Inicie o servidor:**
+4. **Inicie o servidor:**
 
    ```sh
    npm run start
    ```
 
-6. **Acesse a documentação da API:**
+5. **Acesse a documentação da API:**
    - A documentação do Swagger estará disponível em <http://localhost:3000/api-docs>
 
 ### Estrutura do Projeto
