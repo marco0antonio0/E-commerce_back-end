@@ -16,13 +16,17 @@ export class CartDTO {
     @IsNumberString()
     quantity: number;
 
+    @ApiProperty({
+        description: 'price of the product',
+        example: 4.99
+    })
     @IsOptional()
     @IsNumberString()
     price?: number;
 
     @ApiProperty({
-        description: 'Email of the user',
-        example: 'user@example.com',
+        description: 'Name of the product',
+        example: 'Lorem ipsum dollor',
         required: false
     })
     @IsString()

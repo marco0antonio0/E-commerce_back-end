@@ -6,23 +6,29 @@ import { AxiosResponse } from 'axios';
 
 @Injectable()
 export class ProductsService implements AbstractProductsService {
-    // URLs dos fornecedores
     private readonly brazilianProviderUrl = 'http://616d6bdb6dacbb001794ca17.mockapi.io/devnology/brazilian_provider';
     private readonly europeanProviderUrl = 'http://616d6bdb6dacbb001794ca17.mockapi.io/devnology/european_provider';
 
-    // Injeta o serviço HTTP do NestJS
+    private cachedProducts = null; // Variável de instância para armazenar os produtos randomizados
+
     constructor(private readonly httpService: HttpService) { }
 
     // Função para embaralhar um array usando o algoritmo Fisher-Yates
-    shuffleArray(array) {
+    private shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
     }
+
     // Método para obter todos os produtos de ambos os fornecedores
     async getAllProducts() {
+        // Se os produtos já foram carregados e embaralhados, retorna o cache
+        if (this.cachedProducts) {
+            return this.cachedProducts;
+        }
+
         try {
             // Realiza chamadas paralelas para os fornecedores e espera que ambas sejam concluídas
             const [brazilianProductsResponse, europeanProductsResponse]: [AxiosResponse<any>, AxiosResponse<any>] = await Promise.all([
@@ -40,12 +46,17 @@ export class ProductsService implements AbstractProductsService {
                 ...product,
                 provider: 'european'
             }));
+
+            // Combina os produtos de ambos os fornecedores e embaralha
             const combinedProducts = [...brazilianProducts, ...europeanProducts];
             const shuffledProducts = this.shuffleArray(combinedProducts);
-            // Combina os produtos de ambos os fornecedores e retorna o resultado
-            return shuffledProducts;
+
+            // Armazena os produtos embaralhados na memória
+            this.cachedProducts = shuffledProducts;
+
+            // Retorna os produtos embaralhados
+            return this.cachedProducts;
         } catch (error) {
-            // console.error('Error fetching products:', error); // Registra o erro para depuração
             // Lança uma exceção se houver um erro ao buscar os produtos
             throw new NotFoundException('Product not found');
         }
@@ -54,21 +65,17 @@ export class ProductsService implements AbstractProductsService {
     // Método para obter um produto específico por ID e fornecedor
     async getProductById(id: string, provider: string) {
         try {
-            // Determina a URL do fornecedor com base no parâmetro provider
             const providerUrl = provider === 'brazilian' ? this.brazilianProviderUrl : this.europeanProviderUrl;
 
-            // Busca o produto pelo ID no fornecedor especificado
             const productResponse: AxiosResponse<any> = await lastValueFrom(
                 this.httpService.get(`${providerUrl}/${id}`)
             );
 
-            // Retorna o produto com a propriedade "provider" adicionada
             return {
                 ...productResponse.data,
                 provider
             };
         } catch (error) {
-            // Lança uma exceção se o produto não for encontrado
             throw new NotFoundException('Product not found');
         }
     }

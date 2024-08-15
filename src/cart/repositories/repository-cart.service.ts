@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CartDTO } from '../models/cart.dto';
 import { CartEntity } from './entities/product.entity';
@@ -26,6 +26,12 @@ export class RepositoryCartService extends AbstractRepositoryCartService {
         if (cartItem) {
             cartItem.quantity = Number(cartItem.quantity) + Number(createCartItemDto.quantity);
             return cartItem.save();
+        }
+        if (createCartItemDto.name == null || createCartItemDto.name.length == 0) {
+            throw new BadRequestException("Informações de nome do produto obrigatórias estão faltando.")
+        }
+        if (createCartItemDto.price == null || createCartItemDto.price == 0) {
+            throw new BadRequestException("Informações de preço obrigatórias estão faltando.")
         }
 
         return this.cartItemModel.create(createCartItemDto);
