@@ -16,6 +16,7 @@ export class CartDTO {
     @IsNumberString()
     quantity: number;
 
+    @IsOptional()
     @IsNumberString()
     price: number;
 
