@@ -16,6 +16,13 @@ export class UserController {
     @Post("check-token")
     @HttpCode(200)
     @ApiOperation({ summary: 'check-jwt token' })
+    @ApiBody({
+        schema: {
+            properties: {
+                token: { type: 'string', example: 'asdagrewfaswferqwdq ...' }
+            }
+        }
+    })
     @ApiResponse({ status: 200, description: 'isValidToken', schema: { example: { token: 'jwt_token' } } })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     async verifyToken(@Body() { token }: TokenDTO) {
