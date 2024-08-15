@@ -5,16 +5,19 @@ import * as bcrypt from 'bcrypt';
 import { AbstractUserService } from './abstract-user.service';
 import { AbstractRepositoryUserService } from '../repositories/abstract-repository-user.service';
 import { AbstractAuthService } from 'src/auth/services/abstract-auth.service';
+import { TokenDTO } from 'src/auth/models/token.dto';
 
 @Injectable()
-export class UserService extends AbstractUserService {
+export class UserService implements AbstractUserService {
     constructor(
         private readonly repositoryUser: AbstractRepositoryUserService,
         private readonly auth: AbstractAuthService,
     ) {
-        super();
-    }
 
+    }
+    async checkJWT({ token }: TokenDTO): Promise<string> {
+        return this.auth.checkToken({ token })
+    }
     async login(user: user_loginDTO): Promise<string> {
         const data = await this.repositoryUser.findUserByEmail({ email: user.email });
         if (!data) {
