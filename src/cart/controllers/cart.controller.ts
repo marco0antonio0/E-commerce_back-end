@@ -52,7 +52,7 @@ export class CartController {
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     async getCartHasBuyItems(@Req() req: Request): Promise<CartEntity[]> {
         const userEmail = req['token']['sub'];
-        return this.cartService.getCartItems(userEmail);
+        return this.cartService.getCartItemsHasBuy(userEmail);
     }
 
     @UseGuards(JwtAuthGuard)
