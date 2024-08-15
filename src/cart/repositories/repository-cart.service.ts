@@ -17,7 +17,6 @@ export class RepositoryCartService extends AbstractRepositoryCartService {
         const cartItem = await this.cartItemModel.findOne({
             where: {
                 productId: createCartItemDto.productId,
-                price: createCartItemDto.price,
                 userEmail: createCartItemDto.userEmail,
                 purchased: false,
                 provider: createCartItemDto.provider
