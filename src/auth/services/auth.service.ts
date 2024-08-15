@@ -13,21 +13,22 @@ export class AuthService implements AbstractAuthService {
     constructor(private readonly JWTService: JwtService) { }
 
     async createToken({ email }: user_emailDTO) {
+        return this.JWTService.sign({
+            sub: email, admin: false
+        },
+            {
+                audience: 'login|register',
+                expiresIn: '24h',
+            })
+    }
+    async checkToken({ token }: TokenDTO) {
         try {
-            const payload = this.JWTService.sign({
-                sub: email, admin: false
-            },
-                {
-                    audience: 'login|register',
-                    expiresIn: '24h',
-                })
-            return payload;
-        } catch (error) {
+            const payload = await this.JWTService.verify(token);
+            return payload
+
+        } catch (erro) {
             throw new UnauthorizedException('Token inválido ou expirado.');
         }
 
-    }
-    async checkToken({ token }: TokenDTO) {
-        return this.JWTService.verify(token)
     }
 }
