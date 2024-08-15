@@ -1,8 +1,9 @@
-import { Injectable, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import { AbstractProductsService } from './abstract-products.service';
 import { AxiosResponse } from 'axios';
+import Fuse from 'fuse.js';
 
 @Injectable()
 export class ProductsService implements AbstractProductsService {
@@ -13,7 +14,6 @@ export class ProductsService implements AbstractProductsService {
 
     constructor(private readonly httpService: HttpService) { }
 
-    // Função para embaralhar um array usando o algoritmo Fisher-Yates
     private shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -22,47 +22,37 @@ export class ProductsService implements AbstractProductsService {
         return array;
     }
 
-    // Método para obter todos os produtos de ambos os fornecedores
     async getAllProducts() {
-        // Se os produtos já foram carregados e embaralhados, retorna o cache
         if (this.cachedProducts) {
             return this.cachedProducts;
         }
 
         try {
-            // Realiza chamadas paralelas para os fornecedores e espera que ambas sejam concluídas
             const [brazilianProductsResponse, europeanProductsResponse]: [AxiosResponse<any>, AxiosResponse<any>] = await Promise.all([
                 lastValueFrom(this.httpService.get(this.brazilianProviderUrl)),
                 lastValueFrom(this.httpService.get(this.europeanProviderUrl)),
             ]);
 
-            // Adiciona a propriedade "provider" para identificar a origem dos produtos
             const brazilianProducts = brazilianProductsResponse.data.map(product => ({
                 ...product,
-                provider: 'brazilian'
+                provider: 'brazilian',
             }));
 
             const europeanProducts = europeanProductsResponse.data.map(product => ({
                 ...product,
-                provider: 'european'
+                provider: 'european',
             }));
 
-            // Combina os produtos de ambos os fornecedores e embaralha
             const combinedProducts = [...brazilianProducts, ...europeanProducts];
             const shuffledProducts = this.shuffleArray(combinedProducts);
 
-            // Armazena os produtos embaralhados na memória
             this.cachedProducts = shuffledProducts;
-
-            // Retorna os produtos embaralhados
             return this.cachedProducts;
         } catch (error) {
-            // Lança uma exceção se houver um erro ao buscar os produtos
             throw new NotFoundException('Product not found');
         }
     }
 
-    // Método para obter um produto específico por ID e fornecedor
     async getProductById(id: string, provider: string) {
         try {
             const providerUrl = provider === 'brazilian' ? this.brazilianProviderUrl : this.europeanProviderUrl;
@@ -73,10 +63,27 @@ export class ProductsService implements AbstractProductsService {
 
             return {
                 ...productResponse.data,
-                provider
+                provider,
             };
         } catch (error) {
             throw new NotFoundException('Product not found');
         }
+    }
+
+    async searchProductsByName(name: string) {
+        const products = await this.getAllProducts();
+
+        const fuse = new Fuse(products, {
+            keys: ['name', 'nome'], // Pesquisar tanto em 'name' quanto em 'nome'
+            threshold: 0.3, // Ajuste a sensibilidade da busca
+        });
+
+        const result = fuse.search(name);
+
+        if (result.length === 0) {
+            throw new NotFoundException(`No products found with name similar to "${name}"`);
+        }
+
+        return result.map(res => res.item);
     }
 }

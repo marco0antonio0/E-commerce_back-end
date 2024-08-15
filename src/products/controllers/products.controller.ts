@@ -1,6 +1,5 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ProductsService } from '../services/products.service';
 import { AbstractProductsService } from '../services/abstract-products.service';
 
 @ApiTags('products')
@@ -21,5 +20,13 @@ export class ProductsController {
     @ApiResponse({ status: 404, description: 'Product not found' })
     async getProductById(@Param('id') id: string, @Param('provider') provider: string) {
         return await this.productsService.getProductById(id, provider);
+    }
+
+    @Get('search')
+    @ApiOperation({ summary: 'Search for products by name' })
+    @ApiResponse({ status: 200, description: 'List of products matching the search criteria' })
+    @ApiResponse({ status: 404, description: 'No products found' })
+    async searchProductsByName(@Query('name') name: string) {
+        return await this.productsService.searchProductsByName(name);
     }
 }
