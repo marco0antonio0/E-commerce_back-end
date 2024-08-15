@@ -18,7 +18,7 @@ export class CartDTO {
 
     @IsOptional()
     @IsNumberString()
-    price: number;
+    price?: number;
 
     @ApiProperty({
         description: 'Email of the user',
