@@ -3,7 +3,7 @@ import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import { AbstractProductsService } from './abstract-products.service';
 import { AxiosResponse } from 'axios';
-import Fuse from 'fuse.js';
+const Fuse = require('fuse.js');
 
 
 @Injectable()
