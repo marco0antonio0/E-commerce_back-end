@@ -15,11 +15,17 @@ export class RepositoryCartService extends AbstractRepositoryCartService {
 
     async addToCart(createCartItemDto: CartDTO): Promise<CartEntity> {
         const cartItem = await this.cartItemModel.findOne({
-            where: { productId: createCartItemDto.productId, price: createCartItemDto.price, userEmail: createCartItemDto.userEmail, purchased: false, provider: createCartItemDto.provider },
+            where: {
+                productId: createCartItemDto.productId,
+                price: createCartItemDto.price,
+                userEmail: createCartItemDto.userEmail,
+                purchased: false,
+                provider: createCartItemDto.provider
+            },
         });
 
         if (cartItem) {
-            cartItem.quantity += createCartItemDto.quantity;
+            cartItem.quantity = Number(cartItem.quantity) + Number(createCartItemDto.quantity);
             return cartItem.save();
         }
 
