@@ -25,6 +25,10 @@ export class CartDTO {
         example: 'user@example.com',
         required: false
     })
+    @IsString()
+    @IsOptional()
+    name?: string;
+
     @IsEmail()
     @IsOptional()
     userEmail?: string;
