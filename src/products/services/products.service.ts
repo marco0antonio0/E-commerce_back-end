@@ -5,6 +5,7 @@ import { AbstractProductsService } from './abstract-products.service';
 import { AxiosResponse } from 'axios';
 import Fuse from 'fuse.js';
 
+
 @Injectable()
 export class ProductsService implements AbstractProductsService {
     private readonly brazilianProviderUrl = 'http://616d6bdb6dacbb001794ca17.mockapi.io/devnology/brazilian_provider';
@@ -33,15 +34,26 @@ export class ProductsService implements AbstractProductsService {
                 lastValueFrom(this.httpService.get(this.europeanProviderUrl)),
             ]);
 
-            const brazilianProducts = brazilianProductsResponse.data.map(product => ({
-                ...product,
-                provider: 'brazilian',
-            }));
+            const brazilianProducts = brazilianProductsResponse.data.map((product) => {
+                if (typeof (product) != typeof ("")) {
+                    return ({
+                        ...product,
+                        provider: 'brazilian',
+                    });
+                }
+            })
 
-            const europeanProducts = europeanProductsResponse.data.map(product => ({
-                ...product,
-                provider: 'european',
-            }));
+
+            const europeanProducts = europeanProductsResponse.data.map((product) => {
+                if (typeof (product) != typeof ("")) {
+                    return ({
+                        ...product,
+                        provider: 'european',
+                    })
+                }
+
+
+            });
 
             const combinedProducts = [...brazilianProducts, ...europeanProducts];
             const shuffledProducts = this.shuffleArray(combinedProducts);
@@ -72,11 +84,12 @@ export class ProductsService implements AbstractProductsService {
 
     async searchProductsByName(name: string) {
         const products = await this.getAllProducts();
+        const options = {
+            keys: ['name', 'nome'],
+            threshold: 0.3
+        };
+        const fuse = new Fuse(products, options);
 
-        const fuse = new Fuse(products, {
-            keys: ['name', 'nome'], // Pesquisar tanto em 'name' quanto em 'nome'
-            threshold: 0.3, // Ajuste a sensibilidade da busca
-        });
 
         const result = fuse.search(name);
 
