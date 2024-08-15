@@ -8,4 +8,5 @@ export abstract class AbstractRepositoryCartService {
     abstract removeFromCart(productId: string, userEmail: string, provider: 'brazilian' | 'european'): Promise<void>;
     abstract clearCart(userEmail: string): Promise<void>;
     abstract finalizePurchase(userEmail: string): Promise<void>;
+    abstract getCartItemsHasBuy(userEmail: string): Promise<CartEntity[]>
 }

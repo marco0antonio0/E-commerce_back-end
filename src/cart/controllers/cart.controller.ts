@@ -46,6 +46,16 @@ export class CartController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('/purchased')
+    @ApiOperation({ summary: 'Get all items in cart of the has buy' })
+    @ApiResponse({ status: 200, description: 'Cart items retrieved successfully.', type: [CartEntity] })
+    @ApiResponse({ status: 401, description: 'Unauthorized' })
+    async getCartHasBuyItems(@Req() req: Request): Promise<CartEntity[]> {
+        const userEmail = req['token']['sub'];
+        return this.cartService.getCartItems(userEmail);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Patch(':productId')
     @ApiBody({
         schema: {

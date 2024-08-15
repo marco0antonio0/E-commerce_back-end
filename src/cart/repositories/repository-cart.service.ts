@@ -47,6 +47,16 @@ export class RepositoryCartService extends AbstractRepositoryCartService {
         return cartItems;
     }
 
+    async getCartItemsHasBuy(userEmail: string): Promise<CartEntity[]> {
+        const cartItems = await this.cartItemModel.findAll({ where: { userEmail, purchased: true } });
+
+        if (!cartItems || cartItems.length === 0) {
+            throw new NotFoundException('Cart items not found');
+        }
+
+        return cartItems;
+    }
+
     async updateCartItem(updateCartItemDto: CartDTO): Promise<CartEntity> {
         const cartItem = await this.cartItemModel.findOne({
             where: { productId: updateCartItemDto.productId, userEmail: updateCartItemDto.userEmail, purchased: false, provider: updateCartItemDto.provider },

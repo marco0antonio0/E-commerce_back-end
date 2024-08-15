@@ -18,6 +18,10 @@ export class CartService implements AbstractCartService {
         return this.repositoryCartService.getCartItems(userEmail);
     }
 
+    getCartItemsHasBuy(userEmail: string): Promise<CartEntity[]> {
+        return this.repositoryCartService.getCartItemsHasBuy(userEmail);
+    }
+
     updateCartItem(updateCartItemDto: CartDTO): Promise<CartEntity> {
         return this.repositoryCartService.updateCartItem(updateCartItemDto);
     }

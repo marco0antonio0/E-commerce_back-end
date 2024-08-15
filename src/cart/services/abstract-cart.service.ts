@@ -13,4 +13,6 @@ export abstract class AbstractCartService {
     abstract clearCart(userEmail: string): Promise<void>;
 
     abstract finalizePurchase(userEmail: string): Promise<void>;
+
+    abstract getCartItemsHasBuy(userEmail: string): Promise<CartEntity[]>
 }
