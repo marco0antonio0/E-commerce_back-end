@@ -9,6 +9,12 @@ export class CartEntity extends Model<CartEntity> {
     productId: string;
 
     @Column({
+        type: DataType.DOUBLE,
+        allowNull: false,
+    })
+    price: number;
+
+    @Column({
         type: DataType.INTEGER,
         allowNull: false,
     })

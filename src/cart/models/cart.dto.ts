@@ -16,6 +16,9 @@ export class CartDTO {
     @IsNumberString()
     quantity: number;
 
+    @IsNumberString()
+    price: number;
+
     @ApiProperty({
         description: 'Email of the user',
         example: 'user@example.com',

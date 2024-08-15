@@ -17,6 +17,7 @@ export class CartController {
         schema: {
             properties: {
                 productId: { type: 'string', example: '1' },
+                price: { type: 'string', example: '4.99' },
                 provider: { type: 'string', example: 'brazilian' },
                 quantity: { type: 'number', example: '1' }
             }

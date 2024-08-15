@@ -15,7 +15,7 @@ export class RepositoryCartService extends AbstractRepositoryCartService {
 
     async addToCart(createCartItemDto: CartDTO): Promise<CartEntity> {
         const cartItem = await this.cartItemModel.findOne({
-            where: { productId: createCartItemDto.productId, userEmail: createCartItemDto.userEmail, purchased: false, provider: createCartItemDto.provider },
+            where: { productId: createCartItemDto.productId, price: createCartItemDto.price, userEmail: createCartItemDto.userEmail, purchased: false, provider: createCartItemDto.provider },
         });
 
         if (cartItem) {
@@ -38,7 +38,7 @@ export class RepositoryCartService extends AbstractRepositoryCartService {
 
     async updateCartItem(updateCartItemDto: CartDTO): Promise<CartEntity> {
         const cartItem = await this.cartItemModel.findOne({
-            where: { productId: updateCartItemDto.productId, userEmail: updateCartItemDto.userEmail, purchased: false, provider: updateCartItemDto.provider },
+            where: { productId: updateCartItemDto.productId, price: updateCartItemDto.price, userEmail: updateCartItemDto.userEmail, purchased: false, provider: updateCartItemDto.provider },
         });
 
         if (!cartItem) {
