@@ -18,7 +18,7 @@ export class CartController {
             properties: {
                 productId: { type: 'string', example: '1' },
                 provider: { type: 'string', example: 'brazilian' },
-                quantity: { type: 'number', example: 1 }
+                quantity: { type: 'number', example: '1' }
             }
         }
     })

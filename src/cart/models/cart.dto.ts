@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsEmail, IsOptional, IsIn } from 'class-validator';
+import { IsString, IsNumber, IsEmail, IsOptional, IsIn, IsNumberString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CartDTO {
@@ -13,7 +13,7 @@ export class CartDTO {
         description: 'Quantity of the product',
         example: 1
     })
-    @IsNumber()
+    @IsNumberString()
     quantity: number;
 
     @ApiProperty({
