@@ -43,14 +43,14 @@ export class RepositoryCartService extends AbstractRepositoryCartService {
 
     async updateCartItem(updateCartItemDto: CartDTO): Promise<CartEntity> {
         const cartItem = await this.cartItemModel.findOne({
-            where: { productId: updateCartItemDto.productId, price: updateCartItemDto.price, userEmail: updateCartItemDto.userEmail, purchased: false, provider: updateCartItemDto.provider },
+            where: { productId: updateCartItemDto.productId, userEmail: updateCartItemDto.userEmail, purchased: false, provider: updateCartItemDto.provider },
         });
 
         if (!cartItem) {
             throw new NotFoundException('Cart item not found');
         }
 
-        cartItem.quantity = updateCartItemDto.quantity;
+        cartItem.quantity = Number(cartItem.quantity) + Number(updateCartItemDto.quantity);
         return cartItem.save();
     }
 
