@@ -84,14 +84,26 @@ export class ProductsService implements AbstractProductsService {
 
     async searchProductsByName(name: string) {
         const products = await this.getAllProducts();
+
+        // Normalizar o texto do nome da busca para minúsculas
+        const normalizedSearchTerm = name.toLowerCase();
+
+        // Opções do Fuse.js
         const options = {
             keys: ['name', 'nome'],
-            threshold: 0.3
+            threshold: 0.3,
+            // Normaliza o texto dos produtos para minúsculas para garantir busca case-insensitive
+            getFn: (obj, path) => {
+                const value = Fuse.config.getFn(obj, path);
+                return typeof value === 'string' ? value.toLowerCase() : '';
+            }
         };
+
+        // Cria uma nova instância do Fuse.js com os produtos normalizados
         const fuse = new Fuse(products, options);
 
-
-        const result = fuse.search(name);
+        // Realiza a busca usando o termo normalizado
+        const result = fuse.search(normalizedSearchTerm);
 
         if (result.length === 0) {
             throw new NotFoundException(`No products found with name similar to "${name}"`);
