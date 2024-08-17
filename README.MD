@@ -1,74 +1,41 @@
 
-# Teste Desenvolvedor(a) JR - Back End E-commerce
+# Back-End E-commerce
 
-### Projeto acess endpoints - Prods
+![img](imageReadme/wal.png)
+
+Este projeto é uma aplicação de e-commerce desenvolvida para o teste tecnico. O back-end foi construído utilizando NestJS e inclui funcionalidades de autenticação, gerenciamento de carrinho e integração com APIs de fornecedores para listar produtos.
+
+### Acesso aos Endpoints
 
 - [Acesso Endpoints web](https://e-commerce-api.dirrocha.com/api-docs)
 - [Acesso phpMyAdmin web](https://e-commerce-php.dirrocha.com/)
-- [Acesso Swaggger docs web](https://e-commerce-api.dirrocha.com/api-docs)
+- [Acesso Swagger docs web](https://e-commerce-api.dirrocha.com/api-docs)
 
-### Acesso rapido a docs readme
+### Índice Rápido
 
-- [Estrutura do projeto](#estrutura-do-projeto)
-- [Documentação-dos-endpoints](#documentação-dos-endpoints)
-- [Como acessar a documentação swagger](#acessando-a-documentação-da-api)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+- [Documentação dos Endpoints](#documentação-dos-endpoints)
+- [Como Acessar a Documentação Swagger](#acessando-a-documentação-da-api)
+- [Passos para Configuração](#passos-para-configuração)
+<!-- - [Tecnologias Utilizadas](#tecnologias-utilizadas) -->
 
-Este projeto é uma aplicação de e-commerce desenvolvida para o teste de Desenvolvedor(a) JR. O back-end foi construído utilizando NestJS e inclui funcionalidades de autenticação, gerenciamento de carrinho e integração com APIs de fornecedores para listar produtos.
+## Visão Geral do Projeto
 
-## Tecnologias Utilizadas
+Este back-end foi desenvolvido como parte de um desafio técnico para a construção de um sistema de e-commerce. A aplicação lida com funcionalidades cruciais, como a autenticação de usuários, o gerenciamento de carrinho de compras, e a integração com APIs de fornecedores para a listagem de produtos.
 
-- **NestJS**: Framework para a construção de aplicações Node.js escaláveis e eficientes.
-- **TypeScript**: Superset do JavaScript que adiciona tipagem estática.
-- **Swagger**: Ferramenta para documentação de APIs.
-- **JWT (JSON Web Token)**: Método de autenticação.
-- **Sequelize**: ORM (Object Relational Mapping) para interagir com o banco de dados.
-- **rate-limit**: Middleware para limitar a taxa de requisições.
-- **class-validator**: Biblioteca para validação de classes.
+### Decisões de Desenvolvimento
 
-## Funcionalidades
+![img](imageReadme/1689705931627.jpeg)
 
-- **Autenticação JWT**: Implementação de autenticação segura utilizando tokens JWT.
-- **Gerenciamento de Carrinho**: Adicionar, atualizar, remover e listar itens do carrinho.
-- **Registro de Usuário**: Registro de novos usuários.
-- **Login de Usuário**: Autenticação de usuários existentes.
-- **APIs de Produtos**: Integração com APIs de fornecedores para listar produtos.
+- **Escolha do NestJS**: O NestJS foi escolhido devido à sua estrutura modular e à facilidade com que permite escalar aplicações Node.js. O uso de TypeScript garantiu tipagem estática, o que melhora a qualidade do código e reduz erros em tempo de execução.
 
-## Como Executar o Projeto
+- **Integração com APIs de Fornecedores**: A integração com APIs de fornecedores externos foi projetada para ser eficiente e segura. A aplicação consome dados de produtos dessas APIs e os disponibiliza aos usuários finais.
 
-### Pré-requisitos
+- **Autenticação JWT**: Implementou-se a autenticação via JWT (JSON Web Token) para garantir a segurança das sessões dos usuários, mantendo os dados protegidos.
 
-- **Node.js**: Instale a versão LTS mais recente de [Node.js](https://nodejs.org/).
-- **NestJS CLI**: Instale o CLI do NestJS globalmente:
-
-  ```sh
-  npm install -g @nestjs/cli
-  ```
-
-- **Banco de Dados**: Configure um banco de dados PostgreSQL.
-
-### Passos para Configuração
-
-1. **Clone o repositório:**
-
-   ```sh
-   git clone <https://github.com/marco0antonio0/E-commerce_back-end>
-   cd E-commerce_back-end
-   ```
-
-2. **Instale as dependências:**
-
-   ```sh
-   npm install
-   ```
-
-3. **Configuração do Banco de Dados:**
-   - Crie um arquivo `.env` na raiz do projeto e configure suas variáveis de ambiente conforme o exemplo abaixo:
+- **Persistência de Dados com Sequelize**: Para a camada de persistência, foi utilizado o Sequelize como ORM, o que facilita a interação com o banco de dados e garante a portabilidade do código.
 
     ```env
-    DB_HOST='localhost'
-    DB_PORT='3306'
-    PORT='3000'
-    DB_USER='you_user'
     DB_ROOT_USER='root'
     DB_PASSWORD='your_password'
     DB_DATABASE='empreendimento'
@@ -78,9 +45,9 @@ Este projeto é uma aplicação de e-commerce desenvolvida para o teste de Desen
 
 4. **Inicie o servidor:**
 
-   ```sh
-   npm run start
-   ```
+    ```sh
+    npm run start
+    ```
 
 5. **Acesse a documentação da API:**
    - A documentação do Swagger estará disponível em <http://localhost:3000/api-docs>
@@ -154,6 +121,10 @@ Este projeto é uma aplicação de e-commerce desenvolvida para o teste de Desen
 ```
 
 # Documentação dos Endpoints
+
+![img](imageReadme/1_aKVg84SP5oPV9fwOnbl6yQ.png)
+
+- [Acesso Swagger docs web online](https://e-commerce-api.dirrocha.com/api-docs)
 
 ## UserController
 
