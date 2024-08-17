@@ -210,6 +210,32 @@ Registro de um novo usuário.
   }
   ```
 
+### POST /user/check-token
+
+#### Descrição
+
+Validação da chave de autenticação de usuário.
+
+#### Request Body
+
+  ```json
+  {
+    "token": "asdasdasodnoi ...",
+  }
+```
+
+#### Respostas
+
+- **200 OK**: Login bem-sucedido.
+
+  ```json
+  {
+    "data": {...}
+  }
+  ```
+
+- **401 Unauthorized**: Credenciais inválidas.
+
 ## ProductsController
 
 ### GET /products
@@ -239,27 +265,59 @@ Recupera todos os produtos.
   ]
   ```
 
-### GET /products/:id
+### GET /products/:provider/:id
 
 #### Descrição
 
-Recupera um produto pelo ID.
+Recupera um produto pelo ID e o Provide do produto.
 
 #### Parâmetros
 
 - `id`: ID do produto.
+- `provider`: provedor do produto.
+
+#### Respostas
+
+- **200 OK**: Produto especificado recebido.
+
+  ```json
+  {
+    "id": "1",
+    "name": "Product 1",
+    "provider": "Brazilian",
+    "description": "This is product 1",
+    "price": 100
+    ...
+  }
+  ```
+
+- **404 Not Found**: Produto não encontrado.
+
+### GET /products/search?name=queryName
+
+#### Descrição
+
+Recupera um produto pelo nome. Utiliza da biblioteca fuzy.js para fazer comparativos e logica fuzy para trazer a melhor correspondencia com base no nome
+
+#### Parâmetros
+
+- `name`: Nome do produto.
 
 #### Respostas
 
 - **200 OK**: Produto com o ID especificado.
 
   ```json
-  {
-    "id": "1",
-    "name": "Product 1",
-    "description": "This is product 1",
-    "price": 100
-  }
+  [  
+    {
+      "id": "1",
+      "name": "Product 1",
+      "provider": "Brazilian",
+      "description": "This is product 1",
+      "price": 100
+      ...
+    }
+    ]
   ```
 
 - **404 Not Found**: Produto não encontrado.
@@ -301,6 +359,35 @@ Adiciona um item ao carrinho.
 #### Descrição
 
 Recupera todos os itens no carrinho.
+
+#### Respostas
+
+- **200 OK**: Itens do carrinho recuperados com sucesso.
+
+  ```json
+  [
+    {
+      "id": "1",
+      "productId": "1",
+      "quantity": 1,
+      "userEmail": "user@example.com"
+    },
+    {
+      "id": "2",
+      "productId": "2",
+      "quantity": 2,
+      "userEmail": "user@example.com"
+    }
+  ]
+  ```
+
+- **401 Unauthorized**: Não autorizado.
+
+### GET /cart/purchased
+
+#### Descrição
+
+Recupera todos os itens no carrinho que ja foram comprados pelo cliente.
 
 #### Respostas
 
