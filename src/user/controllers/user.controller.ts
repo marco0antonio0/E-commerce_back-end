@@ -5,7 +5,7 @@ import { UserService } from '../services/user.service';
 import { userDTO } from '../models/user.dto';
 import { json } from 'sequelize';
 import { AbstractUserService } from '../services/abstract-user.service';
-import { TokenDTO } from 'src/auth/models/token.dto';
+import { TokenDTO } from './../../auth/models/token.dto';
 require('dotenv').config()
 
 @ApiTags('user')

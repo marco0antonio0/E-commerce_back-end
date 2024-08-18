@@ -18,7 +18,15 @@ class MockProductsService extends AbstractProductsService {
         } else if (id === '2' && provider === 'european') {
             return { id: '2', name: 'Product 2', provider: 'european' };
         }
-        throw new NotFoundException('Product not found'); // Lança uma exceção NotFoundException
+        throw new NotFoundException('Product not found');
+    }
+
+    async searchProductsByName(name: string): Promise<any[]> {
+        const products = [
+            { id: '1', name: 'Product 1', provider: 'brazilian' },
+            { id: '2', name: 'Product 2', provider: 'european' },
+        ];
+        return products.filter(product => product.name.toLowerCase().includes(name.toLowerCase()));
     }
 }
 
@@ -61,6 +69,20 @@ describe('ProductsController', () => {
         return request(app.getHttpServer())
             .get('/products/brazilian/999')
             .expect(404);
+    });
+
+    it('/products/search (GET) - success', () => {
+        return request(app.getHttpServer())
+            .get('/products/search?name=Product 1')
+            .expect(200)
+            .expect([{ id: '1', name: 'Product 1', provider: 'brazilian' }]);
+    });
+
+    it('/products/search (GET) - no products found', () => {
+        return request(app.getHttpServer())
+            .get('/products/search?name=NonExistent')
+            .expect(200)
+            .expect([]);
     });
 
     afterAll(async () => {

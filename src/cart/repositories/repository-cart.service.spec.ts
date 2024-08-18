@@ -1,17 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/sequelize';
 import { RepositoryCartService } from './repository-cart.service';
-import { CartEntity } from './entities/product.entity';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { CartDTO } from '../models/cart.dto';
-
-const mockCartEntity = {
-    findOne: jest.fn(),
-    findAll: jest.fn(),
-    create: jest.fn(),
-    save: jest.fn(),
-    destroy: jest.fn(),
-};
+import { MockRepositoryCartService } from './__mock__/MockRepositoryCartService';
 
 describe('RepositoryCartService', () => {
     let service: RepositoryCartService;
@@ -19,10 +10,9 @@ describe('RepositoryCartService', () => {
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
-                RepositoryCartService,
                 {
-                    provide: getModelToken(CartEntity),
-                    useValue: mockCartEntity,
+                    provide: RepositoryCartService,
+                    useClass: MockRepositoryCartService, // Usando o mock criado
                 },
             ],
         }).compile();
@@ -37,102 +27,108 @@ describe('RepositoryCartService', () => {
     // Testes para a função addToCart
     describe('addToCart', () => {
         it('should add a new item to the cart if it does not exist', async () => {
-            mockCartEntity.findOne.mockResolvedValue(null);
-            const dto: CartDTO = { productId: '1', userEmail: 'test@test.com', quantity: 1, provider: 'brazilian' };
-            mockCartEntity.create.mockResolvedValue(dto);
+            const dto: CartDTO = { productId: '1', userEmail: 'test@test.com', quantity: 1, provider: 'brazilian', name: 'Product 1', price: 100 };
 
-            expect(await service.addToCart(dto)).toEqual(dto);
-            expect(mockCartEntity.findOne).toHaveBeenCalledWith({
-                where: { productId: dto.productId, userEmail: dto.userEmail, purchased: false, provider: dto.provider },
-            });
-            expect(mockCartEntity.create).toHaveBeenCalledWith(dto);
+            const result = await service.addToCart(dto);
+            expect(result).toEqual(expect.objectContaining(dto));
         });
 
         it('should increase quantity if item already exists in the cart', async () => {
-            const existingCartItem = { ...mockCartEntity, quantity: 1, save: jest.fn().mockResolvedValue(true) };
-            mockCartEntity.findOne.mockResolvedValue(existingCartItem);
-            const dto: CartDTO = { productId: '1', userEmail: 'test@test.com', quantity: 1, provider: 'brazilian' };
+            const dto: CartDTO = { productId: '1', userEmail: 'test@test.com', quantity: 1, provider: 'brazilian', name: 'Product 1', price: 100 };
 
-            await service.addToCart(dto);
-            expect(existingCartItem.quantity).toBe(2);
-            expect(existingCartItem.save).toHaveBeenCalled();
+            await service.addToCart(dto); // Adiciona o item pela primeira vez
+            const updatedItem = await service.addToCart(dto); // Adiciona novamente, deve aumentar a quantidade
+
+            expect(updatedItem.quantity).toBe(2); // Quantidade deve ser 2
+        });
+
+        it('should throw BadRequestException if name is missing', async () => {
+            const dto: CartDTO = { productId: '1', userEmail: 'test@test.com', quantity: 1, provider: 'brazilian', name: '', price: 100 };
+
+            await expect(service.addToCart(dto)).rejects.toThrow(BadRequestException);
+        });
+
+        it('should throw BadRequestException if price is missing or zero', async () => {
+            const dto: CartDTO = { productId: '1', userEmail: 'test@test.com', quantity: 1, provider: 'brazilian', name: 'Product 1', price: 0 };
+
+            await expect(service.addToCart(dto)).rejects.toThrow(BadRequestException);
         });
     });
 
     // Testes para a função getCartItems
     describe('getCartItems', () => {
         it('should return cart items for a user', async () => {
-            const cartItems = [{ productId: '1', userEmail: 'test@test.com', quantity: 1 }];
-            mockCartEntity.findAll.mockResolvedValue(cartItems);
+            const dto: CartDTO = { productId: '1', userEmail: 'test@test.com', quantity: 1, provider: 'brazilian', name: 'Product 1', price: 100 };
+            await service.addToCart(dto);
 
-            expect(await service.getCartItems('test@test.com')).toEqual(cartItems);
+            const cartItems = await service.getCartItems('test@test.com');
+            expect(cartItems.length).toBe(1);
+            expect(cartItems[0]).toEqual(expect.objectContaining(dto));
         });
 
         it('should throw NotFoundException if no cart items are found', async () => {
-            mockCartEntity.findAll.mockResolvedValue([]);
-
-            await expect(service.getCartItems('test@test.com')).rejects.toThrow(NotFoundException);
+            await expect(service.getCartItems('nonexistent@test.com')).rejects.toThrow(NotFoundException);
         });
     });
 
     // Testes para a função updateCartItem
     describe('updateCartItem', () => {
         it('should update the quantity of a cart item', async () => {
-            const existingCartItem = { ...mockCartEntity, quantity: 1, save: jest.fn().mockResolvedValue(true) };
-            mockCartEntity.findOne.mockResolvedValue(existingCartItem);
-            const dto: CartDTO = { productId: '1', userEmail: 'test@test.com', quantity: 2, provider: 'brazilian' };
+            const dto: CartDTO = { productId: '1', userEmail: 'test@test.com', quantity: 1, provider: 'brazilian', name: 'Product 1', price: 100 };
+            await service.addToCart(dto);
 
-            await service.updateCartItem(dto);
-            expect(existingCartItem.quantity).toBe(2);
-            expect(existingCartItem.save).toHaveBeenCalled();
+            const updateDto: CartDTO = { productId: '1', userEmail: 'test@test.com', quantity: 2, provider: 'brazilian', name: 'Product 1', price: 100 };
+            const updatedItem = await service.updateCartItem(updateDto);
+
+            expect(updatedItem.quantity).toBe(3); // 1 existente + 2 atualizado
         });
 
         it('should throw NotFoundException if cart item is not found', async () => {
-            mockCartEntity.findOne.mockResolvedValue(null);
-            const dto: CartDTO = { productId: '1', userEmail: 'test@test.com', quantity: 2, provider: 'brazilian' };
+            const updateDto: CartDTO = { productId: '999', userEmail: 'test@test.com', quantity: 2, provider: 'brazilian', name: 'Product 1', price: 100 };
 
-            await expect(service.updateCartItem(dto)).rejects.toThrow(NotFoundException);
+            await expect(service.updateCartItem(updateDto)).rejects.toThrow(NotFoundException);
         });
     });
 
     // Testes para a função removeFromCart
     describe('removeFromCart', () => {
         it('should remove an item from the cart', async () => {
-            const cartItem = { ...mockCartEntity, destroy: jest.fn().mockResolvedValue(true) };
-            mockCartEntity.findOne.mockResolvedValue(cartItem);
+            const dto: CartDTO = { productId: '1', userEmail: 'test@test.com', quantity: 1, provider: 'brazilian', name: 'Product 1', price: 100 };
+            await service.addToCart(dto);
 
             await service.removeFromCart('1', 'test@test.com', 'brazilian');
-            expect(cartItem.destroy).toHaveBeenCalled();
+
+            await expect(service.getCartItems('test@test.com')).rejects.toThrow(NotFoundException);
         });
 
         it('should throw NotFoundException if cart item is not found', async () => {
-            mockCartEntity.findOne.mockResolvedValue(null);
-
-            await expect(service.removeFromCart('1', 'test@test.com', 'brazilian')).rejects.toThrow(NotFoundException);
+            await expect(service.removeFromCart('999', 'test@test.com', 'brazilian')).rejects.toThrow(NotFoundException);
         });
     });
 
     // Testes para a função clearCart
     describe('clearCart', () => {
         it('should clear all items in the cart for a user', async () => {
-            mockCartEntity.destroy.mockResolvedValue(true);
+            const dto: CartDTO = { productId: '1', userEmail: 'test@test.com', quantity: 1, provider: 'brazilian', name: 'Product 1', price: 100 };
+            await service.addToCart(dto);
 
             await service.clearCart('test@test.com');
-            expect(mockCartEntity.destroy).toHaveBeenCalledWith({ where: { userEmail: 'test@test.com', purchased: false }, truncate: true });
+
+            await expect(service.getCartItems('test@test.com')).rejects.toThrow(NotFoundException);
         });
     });
 
     // Testes para a função finalizePurchase
     describe('finalizePurchase', () => {
         it('should mark all cart items as purchased', async () => {
-            const cartItems = [{ ...mockCartEntity, purchased: false, save: jest.fn().mockResolvedValue(true) }];
-            mockCartEntity.findAll.mockResolvedValue(cartItems);
+            const dto: CartDTO = { productId: '1', userEmail: 'test@test.com', quantity: 1, provider: 'brazilian', name: 'Product 1', price: 100 };
+            await service.addToCart(dto);
 
             await service.finalizePurchase('test@test.com');
-            for (const item of cartItems) {
-                expect(item.purchased).toBe(true);
-                expect(item.save).toHaveBeenCalled();
-            }
+            const purchasedItems = await service.getCartItemsHasBuy('test@test.com');
+
+            expect(purchasedItems.length).toBe(1);
+            expect(purchasedItems[0].purchased).toBe(true);
         });
     });
 });

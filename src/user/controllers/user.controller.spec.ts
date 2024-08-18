@@ -5,9 +5,7 @@ import { UserController } from './user.controller';
 import { AbstractUserService } from '../services/abstract-user.service';
 import { user_loginDTO } from '../models/user-models.dto';
 import { userDTO } from '../models/user.dto';
-
-
-
+import { TokenDTO } from '../../auth/models/token.dto';
 
 class MockUserService extends AbstractUserService {
     async login(userLoginDto: user_loginDTO): Promise<string> {
@@ -19,6 +17,13 @@ class MockUserService extends AbstractUserService {
 
     async register(userDto: userDTO): Promise<string> {
         return 'mock_jwt_token';
+    }
+
+    async checkJWT(tokenDto: TokenDTO): Promise<string> {
+        if (tokenDto.token === 'valid_jwt_token') {
+            return 'valid_jwt_token';
+        }
+        throw new UnauthorizedException();
     }
 }
 
@@ -61,6 +66,21 @@ describe('UserController', () => {
             .send({ name: 'John Doe', email: 'john.doe@example.com', password: 'password123' })
             .expect(201)
             .expect({ token: 'mock_jwt_token' });
+    });
+
+    it('/user/check-token (POST) - success', () => {
+        return request(app.getHttpServer())
+            .post('/user/check-token')
+            .send({ token: 'valid_jwt_token' })
+            .expect(200)
+            .expect({ token: 'valid_jwt_token' });
+    });
+
+    it('/user/check-token (POST) - unauthorized', () => {
+        return request(app.getHttpServer())
+            .post('/user/check-token')
+            .send({ token: 'invalid_jwt_token' })
+            .expect(401);
     });
 
     afterAll(async () => {
