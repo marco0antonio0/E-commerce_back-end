@@ -1,7 +1,7 @@
 
 # Back-End E-commerce
 
-![img](imageReadme/wal.png)
+![img](imageReadme/uwu.png)
 
 Este projeto é uma aplicação de e-commerce desenvolvida para o teste tecnico. O back-end foi construído utilizando NestJS e inclui funcionalidades de autenticação, gerenciamento de carrinho e integração com APIs de fornecedores para listar produtos.
 
